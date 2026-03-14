@@ -5,6 +5,7 @@ void main() {
   Machine machine = Machine();
   
   print('=== КОФЕМАШИНА ===');
+  print('Добро пожаловать!');
   
   bool isRunning = true;
   
@@ -16,6 +17,9 @@ void main() {
     print('4. Добавить молоко');
     print('5. Внести деньги');
     print('6. Изъять деньги');
+    print('7. Заказать эспрессо (80 руб)');
+    print('8. Заказать капучино (120 руб)');
+    print('9. Заказать латте (150 руб)');
     print('0. Выход');
     stdout.write('Выберите действие: ');
     
@@ -68,6 +72,18 @@ void main() {
         
       case '6':
         machine.withdrawCash();
+        break;
+        
+      case '7':
+        machine.makeCoffee('эспрессо');
+        break;
+        
+      case '8':
+        machine.makeCoffee('капучино');
+        break;
+        
+      case '9':
+        machine.makeCoffee('латте');
         break;
         
       case '0':
