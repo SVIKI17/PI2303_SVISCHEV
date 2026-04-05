@@ -1,19 +1,20 @@
+import '../enums.dart';
 import 'CoffeeTypes.dart';
 import 'Resources.dart';
 
 abstract class ICoffee {
   factory ICoffee.fromType(String type) {
-    switch (type.toLowerCase()) {
-      case 'эспрессо':
+    CoffeeType coffeeType = CoffeeType.fromRuName(type);
+    
+    switch (coffeeType) {
+      case CoffeeType.espresso:
         return Espresso();
-      case 'капучино':
+      case CoffeeType.cappuccino:
         return Cappuccino();
-      case 'латте':
+      case CoffeeType.latte:
         return Latte();
-      case 'американо':
+      case CoffeeType.americano:
         return Americano();
-      default:
-        throw Exception('Неизвестный тип кофе: $type');
     }
   }
 

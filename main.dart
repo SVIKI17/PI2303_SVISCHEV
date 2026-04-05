@@ -20,6 +20,7 @@ void main() {
     print('7. Заказать эспрессо (80 руб)');
     print('8. Заказать капучино (120 руб)');
     print('9. Заказать латте (150 руб)');
+    print('10. Заказать американо (100 руб)');
     print('0. Выход');
     stdout.write('Выберите действие: ');
     
@@ -84,6 +85,10 @@ void main() {
         
       case '9':
         machine.makeCoffee('латте');
+        break;
+        
+      case '10':
+        machine.makeCoffee('американо');
         break;
         
       case '0':

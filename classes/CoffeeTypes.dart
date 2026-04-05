@@ -1,74 +1,55 @@
+import '../enums.dart';
 import 'ICoffee.dart';
 import 'Resources.dart';
 
 class Espresso implements ICoffee {
   @override
-  String getName() => 'Эспрессо';
-
+  String getName() => CoffeeType.espresso.ruName;
   @override
-  int getPrice() => 80;
-
+  int getPrice() => CoffeeType.espresso.price;
   @override
-  Resources getResources() {
-    return Resources(
-      coffeeBeans: 50,
-      water: 100,
-      milk: 0,
-      cash: 0,
-    );
-  }
+  Resources getResources() => Resources(
+    coffeeBeans: CoffeeType.espresso.coffeeBeans,
+    water: CoffeeType.espresso.water,
+    milk: CoffeeType.espresso.milk,
+  );
 }
 
 class Cappuccino implements ICoffee {
   @override
-  String getName() => 'Капучино';
-
+  String getName() => CoffeeType.cappuccino.ruName;
   @override
-  int getPrice() => 120;
-
+  int getPrice() => CoffeeType.cappuccino.price;
   @override
-  Resources getResources() {
-    return Resources(
-      coffeeBeans: 50,
-      water: 100,
-      milk: 150,
-      cash: 0,
-    );
-  }
+  Resources getResources() => Resources(
+    coffeeBeans: CoffeeType.cappuccino.coffeeBeans,
+    water: CoffeeType.cappuccino.water,
+    milk: CoffeeType.cappuccino.milk,
+  );
 }
 
 class Latte implements ICoffee {
   @override
-  String getName() => 'Латте';
-
+  String getName() => CoffeeType.latte.ruName;
   @override
-  int getPrice() => 150;
-
+  int getPrice() => CoffeeType.latte.price;
   @override
-  Resources getResources() {
-    return Resources(
-      coffeeBeans: 50,
-      water: 100,
-      milk: 250,
-      cash: 0,
-    );
-  }
+  Resources getResources() => Resources(
+    coffeeBeans: CoffeeType.latte.coffeeBeans,
+    water: CoffeeType.latte.water,
+    milk: CoffeeType.latte.milk,
+  );
 }
 
 class Americano implements ICoffee {
   @override
-  String getName() => 'Американо';
-
+  String getName() => CoffeeType.americano.ruName;
   @override
-  int getPrice() => 100;
-
+  int getPrice() => CoffeeType.americano.price;
   @override
-  Resources getResources() {
-    return Resources(
-      coffeeBeans: 40,
-      water: 150,
-      milk: 0,
-      cash: 0,
-    );
-  }
+  Resources getResources() => Resources(
+    coffeeBeans: CoffeeType.americano.coffeeBeans,
+    water: CoffeeType.americano.water,
+    milk: CoffeeType.americano.milk,
+  );
 }
