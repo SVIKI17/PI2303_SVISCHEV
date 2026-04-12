@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const SizedBox(height: 20), // отступ
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -79,6 +79,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: const Color.fromARGB(255, 0, 0, 0)),
+              onPressed: () {
+                setState(() {
+                  _counter = 0;
+                });
+              },
+              child: const Text('Сбросить'),
             ),
           ],
         ),
