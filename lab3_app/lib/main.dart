@@ -51,13 +51,34 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
        
         child: Column(
-          
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('Значение инкремента:'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 20), // отступ
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove),
+                  onPressed: () {
+                    setState(() {
+                      _counter--;
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    setState(() {
+                      _counter++;
+                    });
+                  },
+                ),
+              ],
             ),
           ],
         ),
