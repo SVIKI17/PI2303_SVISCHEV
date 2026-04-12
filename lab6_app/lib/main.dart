@@ -52,6 +52,14 @@ class _AreaCalculatorPageState extends State<AreaCalculatorPage> {
     }
   }
 
+  void _clear() {
+    _widthController.clear();
+    _heightController.clear();
+    setState(() {
+      _result = null;
+    });
+  }
+
   String? _validateNumber(String? value) {
     if (value == null || value.isEmpty) {
       return 'Пожалуйста, введите значение';
@@ -129,6 +137,21 @@ class _AreaCalculatorPageState extends State<AreaCalculatorPage> {
                   ),
                   child: const Text(
                     'Вычислить',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: OutlinedButton(
+                  onPressed: _clear,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                  ),
+                  child: const Text(
+                    'Очистить',
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
