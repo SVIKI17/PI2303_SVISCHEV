@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import '../models/photo.dart';
 import '../services/api_service.dart';
+import '../models/cat_image.dart';
 
 class PhotoGalleryScreen extends StatefulWidget {
   const PhotoGalleryScreen({super.key});
@@ -12,47 +11,33 @@ class PhotoGalleryScreen extends StatefulWidget {
 
 class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
   final ApiService _apiService = ApiService();
-  late Future<List<Photo>> _futurePhotos;
+  late Future<List<CatImage>> _futureImages;
 
   @override
   void initState() {
     super.initState();
-    _futurePhotos = _apiService.fetchPhotos(http.Client());
+    _futureImages = _apiService.fetchCatImages();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Фотогалерея'),
+        title: const Text('🐱 Милые котики'),
+        backgroundColor: Colors.orange,
       ),
-      body: FutureBuilder<List<Photo>>(
-        future: _futurePhotos,
+      body: FutureBuilder<List<CatImage>>(
+        future: _futureImages,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 60, color: Colors.red),
-                  const SizedBox(height: 16),
-                  Text('Ошибка: ${snapshot.error}'),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _futurePhotos = _apiService.fetchPhotos(http.Client());
-                      });
-                    },
-                    child: const Text('Попробовать снова'),
-                  ),
-                ],
-              ),
+              child: Text('Ошибка: ${snapshot.error}'),
             );
           }
 
           if (snapshot.hasData) {
             return GridView.builder(
+              padding: const EdgeInsets.all(4),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 crossAxisSpacing: 4,
@@ -60,48 +45,25 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
               ),
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                final photo = snapshot.data![index];
-                return Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Image.network(
-                          photo.thumbnailUrl,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                              child: Icon(Icons.broken_image, size: 50),
-                            );
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          photo.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ),
-                    ],
+                final image = snapshot.data![index];
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    image.url,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.broken_image, size: 50),
+                      );
+                    },
                   ),
                 );
               },
             );
           }
 
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );
