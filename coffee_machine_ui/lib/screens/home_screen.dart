@@ -9,6 +9,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late Machine _machine;
   bool _isMakingCoffee = false;
+  List<String> _statusMessages = [];
 
   @override
   void initState() {
@@ -18,6 +19,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _updateState() {
     setState(() {});
+  }
+
+  void _addStatusMessage(String message) {
+    setState(() {
+      _statusMessages.add(message);
+    });
+  }
+
+  void _clearStatusMessages() {
+    setState(() {
+      _statusMessages.clear();
+    });
   }
 
   void _addResource(String type, int amount) {
@@ -51,24 +64,26 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
+    _clearStatusMessages();
+    
     setState(() {
       _isMakingCoffee = true;
     });
 
-    bool success = await _machine.makeCoffee(type);
+    bool success = await _machine.makeCoffee(type, _addStatusMessage);
 
     setState(() {
       _isMakingCoffee = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(success ? '$name готов! Списано $price руб' : 'Не удалось приготовить $name'),
-        backgroundColor: success ? Colors.green : Colors.red,
-      ),
-    );
-
-    _updateState();
+    if (!success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Не удалось приготовить $name'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -77,30 +92,22 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Кофемашина'),
         backgroundColor: Colors.green,
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
       ),
-      body: _isMakingCoffee
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 20),
-                  Text('Приготовление кофе...'),
-                ],
-              ),
-            )
-          : SingleChildScrollView(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  _buildResourcesCard(),
-                  SizedBox(height: 20),
-                  _buildControlPanel(),
-                  SizedBox(height: 20),
-                  _buildCoffeeMenu(),
-                ],
-              ),
-            ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildResourcesCard(),
+            SizedBox(height: 20),
+            _buildControlPanel(),
+            SizedBox(height: 20),
+            _buildCoffeeMenu(),
+            SizedBox(height: 20),
+            _buildStatusPanel(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -114,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text(
               'Состояние машины',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             SizedBox(height: 10),
             Row(
@@ -143,11 +150,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           child: Text(
             '$value',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
           ),
         ),
         SizedBox(height: 5),
-        Text('$label, $unit'),
+        Text(
+          '$label, $unit',
+          style: TextStyle(color: Colors.black),
+        ),
       ],
     );
   }
@@ -162,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text(
               'Управление ресурсами',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             SizedBox(height: 10),
             Wrap(
@@ -175,8 +185,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildAddButton('Деньги', 'cash', Colors.green, 100),
                 ElevatedButton.icon(
                   onPressed: _withdrawCash,
-                  icon: Icon(Icons.payment),
-                  label: Text('Изъять деньги'),
+                  icon: Icon(Icons.payment, color: Colors.black),
+                  label: Text(
+                    'Изъять деньги',
+                    style: TextStyle(color: Colors.black),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
                   ),
@@ -192,8 +205,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildAddButton(String label, String type, Color color, int amount) {
     return ElevatedButton.icon(
       onPressed: () => _addResource(type, amount),
-      icon: Icon(Icons.add),
-      label: Text('$label +$amount'),
+      icon: Icon(Icons.add, color: Colors.black),
+      label: Text(
+        '$label +$amount',
+        style: TextStyle(color: Colors.black),
+      ),
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
       ),
@@ -210,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text(
               'Заказать кофе',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             SizedBox(height: 10),
             GridView.count(
@@ -240,18 +256,74 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Text(
             name,
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 18, color: Colors.black),
           ),
           SizedBox(height: 5),
           Text(
             '$price руб',
-            style: TextStyle(fontSize: 14),
+            style: TextStyle(fontSize: 14, color: Colors.black),
           ),
         ],
       ),
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         padding: EdgeInsets.symmetric(vertical: 20),
+      ),
+    );
+  }
+
+  Widget _buildStatusPanel() {
+    if (_statusMessages.isEmpty && !_isMakingCoffee) {
+      return SizedBox.shrink();
+    }
+
+    return Card(
+      elevation: 4,
+      color: Colors.grey.shade100,
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.blue),
+                SizedBox(width: 8),
+                Text(
+                  'Статус приготовления',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                ),
+                if (_isMakingCoffee) ...[
+                  SizedBox(width: 10),
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ],
+              ],
+            ),
+            SizedBox(height: 10),
+            Container(
+              height: 200,
+              child: ListView.builder(
+                itemCount: _statusMessages.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      _statusMessages[index],
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../types.dart';
 import 'Resources.dart';
 import 'ICoffee.dart';
 
@@ -21,42 +22,36 @@ class Machine {
   void addCoffeeBeans(int amount) {
     if (amount > 0) {
       _resources.coffeeBeans += amount;
-      print('Добавлено $amount гр кофейных зерен. Теперь: ${_resources.coffeeBeans} гр');
     }
   }
 
   void addMilk(int amount) {
     if (amount > 0) {
       _resources.milk += amount;
-      print('Добавлено $amount мл молока. Теперь: ${_resources.milk} мл');
     }
   }
 
   void addWater(int amount) {
     if (amount > 0) {
       _resources.water += amount;
-      print('Добавлено $amount мл воды. Теперь: ${_resources.water} мл');
     }
   }
 
   void addCash(int amount) {
     if (amount > 0) {
       _resources.cash += amount;
-      print('Внесено $amount руб. В автомате: ${_resources.cash} руб');
     }
   }
 
   void withdrawCash() {
     if (_resources.cash > 0) {
-      print('Изъято ${_resources.cash} руб');
       _resources.cash = 0;
-    } else {
-      print('В автомате нет денег');
     }
   }
 
-  Future<bool> makeCoffee(String coffeeType) async {
-    print('--- Заказ: $coffeeType ---');
+  Future<bool> makeCoffee(String coffeeType, StatusCallback onStatusUpdate) async {
+    onStatusUpdate('--- Заказ: $coffeeType ---');
+    await Future.delayed(Duration(milliseconds: 300));
     
     try {
       ICoffee coffee = ICoffee.fromType(coffeeType);
@@ -64,36 +59,29 @@ class Machine {
       int price = coffee.getPrice();
 
       if (!_resources.hasEnough(needed)) {
-        print('Недостаточно ресурсов!');
-        print('Требуется: $needed');
-        print('В наличии: ${_resources}');
+        onStatusUpdate('Недостаточно ресурсов!');
+        onStatusUpdate('Требуется: кофе ${needed.coffeeBeans}гр, вода ${needed.water}мл, молоко ${needed.milk}мл');
+        onStatusUpdate('В наличии: кофе ${_resources.coffeeBeans}гр, вода ${_resources.water}мл, молоко ${_resources.milk}мл');
         return false;
       }
 
       if (_resources.cash < price) {
-        print('Недостаточно денег! Требуется: $price руб, есть: ${_resources.cash} руб');
+        onStatusUpdate('Недостаточно денег! Требуется: $price руб, есть: ${_resources.cash} руб');
         return false;
       }
 
-      await coffee.prepare();
+      await coffee.prepare(onStatusUpdate);
       
       _resources.subtract(needed);
       _resources.cash -= price;
       
-      print('Списано $price руб');
-      print(coffee.getName() + ' готов!');
+      onStatusUpdate('Списано $price руб');
+      onStatusUpdate('Готово! ${coffee.getName()} приготовлен. Приятного аппетита!');
       return true;
       
     } catch (e) {
-      print('Ошибка: $e');
-      print('Доступные виды кофе: эспрессо, капучино, латте, американо');
+      onStatusUpdate('Ошибка: $e');
       return false;
     }
-  }
-
-  void showStatus() {
-    print('=== СОСТОЯНИЕ КОФЕМАШИНЫ ===');
-    print('${_resources}');
-    print('==============================');
   }
 }

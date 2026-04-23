@@ -1,5 +1,6 @@
 import 'dart:async';
 import '../enums.dart';
+import '../types.dart';
 import 'CoffeeTypes.dart';
 import 'Resources.dart';
 
@@ -22,5 +23,5 @@ abstract class ICoffee {
   String getName();
   int getPrice();
   Resources getResources();
-  Future<void> prepare();
+  Future<void> prepare(StatusCallback onStatusUpdate);
 }

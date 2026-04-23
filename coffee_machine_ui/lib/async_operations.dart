@@ -1,52 +1,48 @@
 import 'dart:async';
+import 'types.dart';
 
-Future<void> heatWater() async {
-  print('[1/4] Начинаем нагрев воды...');
+Future<void> heatWater(StatusCallback onStatusUpdate) async {
+  onStatusUpdate('Начинаем нагрев воды...');
   await Future.delayed(Duration(seconds: 3));
-  print('[1/4] Вода нагрета до 90°C');
+  onStatusUpdate('Вода нагрета до 90°C');
 }
 
-Future<void> brewCoffee() async {
-  print('[2/4] Завариваем кофе...');
+Future<void> brewCoffee(StatusCallback onStatusUpdate) async {
+  onStatusUpdate('Завариваем кофе...');
   await Future.delayed(Duration(seconds: 5));
-  print('[2/4] Кофе заварен');
+  onStatusUpdate('Кофе заварен');
 }
 
-Future<void> frothMilk() async {
-  print('[3/4] Взбиваем молоко...');
+Future<void> frothMilk(StatusCallback onStatusUpdate) async {
+  onStatusUpdate('Взбиваем молоко...');
   await Future.delayed(Duration(seconds: 5));
-  print('[3/4] Молоко взбито');
+  onStatusUpdate('Молоко взбито');
 }
 
-Future<void> mixCoffeeAndMilk() async {
-  print('[4/4] Смешиваем кофе с молоком...');
+Future<void> mixCoffeeAndMilk(StatusCallback onStatusUpdate) async {
+  onStatusUpdate('Смешиваем кофе с молоком...');
   await Future.delayed(Duration(seconds: 3));
-  print('[4/4] Напиток смешан');
+  onStatusUpdate('Напиток смешан');
 }
 
-Future<void> makeCoffeeWithoutMilk(String coffeeName) async {
-  print('Приготовление ' + coffeeName + ':');
-  print('----------------------------------------');
-  await heatWater();
-  await brewCoffee();
-  print('----------------------------------------');
-  print('Готово! ' + coffeeName + ' приготовлен. Приятного аппетита!');
+Future<void> makeCoffeeWithoutMilk(String coffeeName, StatusCallback onStatusUpdate) async {
+  onStatusUpdate('Приготовление ' + coffeeName + ':');
+  await Future.delayed(Duration(milliseconds: 500));
+  await heatWater(onStatusUpdate);
+  await brewCoffee(onStatusUpdate);
 }
 
-Future<void> makeCoffeeWithMilk(String coffeeName) async {
-  print('Приготовление ' + coffeeName + ':');
-  print('----------------------------------------');
+Future<void> makeCoffeeWithMilk(String coffeeName, StatusCallback onStatusUpdate) async {
+  onStatusUpdate('Приготовление ' + coffeeName + ':');
+  await Future.delayed(Duration(milliseconds: 500));
   
-  await heatWater();
+  await heatWater(onStatusUpdate);
   
-  print('Запускаем параллельные процессы: заваривание кофе и взбивание молока...');
+  onStatusUpdate('Запускаем параллельные процессы: заваривание кофе и взбивание молока...');
   await Future.wait([
-    brewCoffee(),
-    frothMilk(),
+    brewCoffee(onStatusUpdate),
+    frothMilk(onStatusUpdate),
   ]);
   
-  await mixCoffeeAndMilk();
-  
-  print('----------------------------------------');
-  print('Готово! ' + coffeeName + ' приготовлен. Приятного аппетита!');
+  await mixCoffeeAndMilk(onStatusUpdate);
 }

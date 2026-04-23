@@ -1,5 +1,6 @@
 import 'dart:async';
 import '../enums.dart';
+import '../types.dart';
 import 'ICoffee.dart';
 import 'Resources.dart';
 import '../async_operations.dart';
@@ -19,8 +20,8 @@ class Espresso implements ICoffee {
   );
   
   @override
-  Future<void> prepare() async {
-    await makeCoffeeWithoutMilk(getName());
+  Future<void> prepare(StatusCallback onStatusUpdate) async {
+    await makeCoffeeWithoutMilk(getName(), onStatusUpdate);
   }
 }
 
@@ -39,8 +40,8 @@ class Cappuccino implements ICoffee {
   );
   
   @override
-  Future<void> prepare() async {
-    await makeCoffeeWithMilk(getName());
+  Future<void> prepare(StatusCallback onStatusUpdate) async {
+    await makeCoffeeWithMilk(getName(), onStatusUpdate);
   }
 }
 
@@ -59,8 +60,8 @@ class Latte implements ICoffee {
   );
   
   @override
-  Future<void> prepare() async {
-    await makeCoffeeWithMilk(getName());
+  Future<void> prepare(StatusCallback onStatusUpdate) async {
+    await makeCoffeeWithMilk(getName(), onStatusUpdate);
   }
 }
 
@@ -79,7 +80,7 @@ class Americano implements ICoffee {
   );
   
   @override
-  Future<void> prepare() async {
-    await makeCoffeeWithoutMilk(getName());
+  Future<void> prepare(StatusCallback onStatusUpdate) async {
+    await makeCoffeeWithoutMilk(getName(), onStatusUpdate);
   }
 }
