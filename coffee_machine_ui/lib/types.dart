@@ -1,0 +1,1 @@
+typedef StatusCallback = void Function(String message);
