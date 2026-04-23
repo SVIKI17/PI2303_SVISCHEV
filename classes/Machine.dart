@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'Resources.dart';
 import 'ICoffee.dart';
 
@@ -54,8 +55,8 @@ class Machine {
     }
   }
 
-  bool makeCoffee(String coffeeType) {
-    print('\n--- Заказ: $coffeeType ---');
+  Future<bool> makeCoffee(String coffeeType) async {
+    print('--- Заказ: $coffeeType ---');
     
     try {
       ICoffee coffee = ICoffee.fromType(coffeeType);
@@ -74,11 +75,13 @@ class Machine {
         return false;
       }
 
-      print('Готовим ${coffee.getName()}...');
+      await coffee.prepare();
+      
       _resources.subtract(needed);
       _resources.cash -= price;
       
-      print('${coffee.getName()} готов! Списано $price руб');
+      print('Списано $price руб');
+      print(coffee.getName() + ' готов!');
       return true;
       
     } catch (e) {
@@ -89,8 +92,8 @@ class Machine {
   }
 
   void showStatus() {
-    print('\n=== СОСТОЯНИЕ КОФЕМАШИНЫ ===');
+    print('=== СОСТОЯНИЕ КОФЕМАШИНЫ ===');
     print('${_resources}');
-    print('==============================\n');
+    print('==============================');
   }
 }
