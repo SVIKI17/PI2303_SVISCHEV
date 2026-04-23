@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'classes/Machine.dart';
 
-void main() {
+void main() async {
   Machine machine = Machine();
   
   print('=== КОФЕМАШИНА ===');
@@ -10,7 +10,7 @@ void main() {
   bool isRunning = true;
   
   while (isRunning) {
-    print('\n--- МЕНЮ ---');
+    print('--- МЕНЮ ---');
     print('1. Показать состояние машины');
     print('2. Добавить кофейные зерна');
     print('3. Добавить воду');
@@ -20,6 +20,7 @@ void main() {
     print('7. Заказать эспрессо (80 руб)');
     print('8. Заказать капучино (120 руб)');
     print('9. Заказать латте (150 руб)');
+    print('10. Заказать американо (100 руб)');
     print('0. Выход');
     stdout.write('Выберите действие: ');
     
@@ -75,15 +76,19 @@ void main() {
         break;
         
       case '7':
-        machine.makeCoffee('эспрессо');
+        await machine.makeCoffee('эспрессо');
         break;
         
       case '8':
-        machine.makeCoffee('капучино');
+        await machine.makeCoffee('капучино');
         break;
         
       case '9':
-        machine.makeCoffee('латте');
+        await machine.makeCoffee('латте');
+        break;
+        
+      case '10':
+        await machine.makeCoffee('американо');
         break;
         
       case '0':
